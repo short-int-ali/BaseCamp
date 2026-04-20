@@ -1,0 +1,3 @@
+# Medical knowledge base artifacts (vector index, seed JSON) live here.
+# The initial scaffold ships a no-op MedicalKb; real seeds arrive in a
+# later pass.

@@ -1,0 +1,53 @@
+# Base Camp
+
+A localized, multimodal emergency safety system. 100% offline. All
+inference runs on-device via LiteRT-LM with Gemma 4 E4B int4.
+
+> **Non-Diagnostic Decision Support. Follow local protocols.**
+
+## Status
+
+Initial scaffold. This pass ships:
+
+- `pubspec.yaml` wired for `flutter_litert_lm` + `cactus` + camera.
+- `VisionProcessor` — Snap-and-Solve vision inference for
+  Pills / Plants / Patients modes.
+- `EmergencyUI` — high-contrast camera-first UI with the persistent
+  legal disclaimer.
+
+Deferred (see `/lib/modules/lang/`, future wearable module):
+Multilingual Medical Gateway, Body Area Network / Wear OS BLE bridge,
+real medical KB seed.
+
+## Getting started
+
+1. Install Flutter 3.22+ and the Dart SDK.
+2. Drop the LiteRT-LM model bundle at:
+
+   ```
+   assets/models/gemma4_e4b_int4.litertlm
+   ```
+
+   The app refuses to leave the first-boot gate until this file is
+   present.
+
+3. `flutter pub get`
+4. `flutter run` (Android API 24+ / iOS 13+)
+
+## Layout
+
+```
+lib/
+  main.dart
+  theme/emergency_theme.dart
+  ui/emergency_ui.dart
+  modules/
+    vision/            # Snap-and-Solve
+    lang/              # Multilingual gateway (reserved)
+  database/            # Local RAG / medical KB
+```
+
+## Offline guarantee
+
+`pubspec.yaml` intentionally omits every HTTP client. Any PR that adds
+`http`, `dio`, `google_generative_ai`, or similar must be rejected.

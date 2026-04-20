@@ -1,0 +1,6 @@
+# Drop the LiteRT-LM bundle for Gemma 4 E4B int4 here:
+#
+#   assets/models/gemma4_e4b_int4.litertlm
+#
+# The file is gitignored (see /.gitignore). The app will refuse to leave
+# the first-boot gate until this file is present.

@@ -1,0 +1,52 @@
+name: base_camp
+description: "Base Camp — Localized, multimodal emergency safety system. 100% offline, on-device Gemma 4 E4B via LiteRT-LM."
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.22.0"
+
+# Local-only inference stack. Any addition of http clients (http, dio,
+# google_generative_ai, etc.) violates the offline safety constraint and
+# must be rejected in review.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # On-device LLM runtime. Primary engine for Gemma 4 E4B multimodal
+  # inference (CPU / GPU / NPU on Android, CPU on iOS).
+  flutter_litert_lm: ^0.3.0
+
+  # Reserved for local RAG / embeddings / vector search over the medical
+  # knowledge base. Not wired in the initial scaffold but declared so the
+  # dependency graph is stable for follow-up work.
+  cactus: ^1.3.0
+
+  # Camera capture for the Snap-and-Solve vision module.
+  camera: ^0.11.0
+
+  # Resolve on-device paths (application support dir) for model + KB files.
+  path_provider: ^2.1.4
+
+  # Runtime permission prompts (camera now, microphone later for the
+  # multilingual gateway).
+  permission_handler: ^11.3.1
+
+  # Pure-Dart image preprocessing (resize / re-encode) before frames are
+  # handed to the Gemma vision encoder.
+  image: ^4.2.0
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/models/
+    - assets/kb/
