@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -417,7 +416,7 @@ class VisionProcessor {
       tier = rule.tier;
       citations = [rule.citation];
       grounded = true;
-      summary = '${modelSummary} Triage: ${tier.label}. ${rule.rationale}';
+      summary = '$modelSummary Triage: ${tier.label}. ${rule.rationale}';
     } else {
       // Downgrade-to-yellow hallucination guard: without KB citation
       // we refuse to assign RED and ask the responder to verify.

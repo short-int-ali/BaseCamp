@@ -1,4 +1,3 @@
-import '../modules/vision/vision_mode.dart';
 import '../modules/vision/vision_result.dart';
 
 /// A single pill-imprint match returned by [MedicalKb.lookupPillImprint].

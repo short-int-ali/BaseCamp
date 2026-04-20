@@ -31,7 +31,7 @@ dependencies:
 
   # Runtime permission prompts (camera now, microphone later for the
   # multilingual gateway).
-  permission_handler: ^11.3.1
+  permission_handler: 12.0.1
 
   # Pure-Dart image preprocessing (resize / re-encode) before frames are
   # handed to the Gemma vision encoder.
