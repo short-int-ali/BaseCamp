@@ -6,12 +6,12 @@
 .pub-cache/
 .pub/
 build/
-pubspec.lock
 
 # IDE
 .idea/
 .vscode/
 *.iml
+.cursor/
 
 # OS
 .DS_Store

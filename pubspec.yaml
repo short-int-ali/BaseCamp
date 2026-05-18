@@ -102,7 +102,7 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: BaseCamp_icon.jpeg
+  image_path: BaseCamp_icon.png
   min_sdk_android: 21
 
 flutter:
