@@ -3,6 +3,9 @@
 A localized, multimodal emergency safety system. 100% offline. All
 inference runs on-device via LiteRT-LM with Gemma 4 E2B int4.
 
+Completely compiled apk consisting of the model and all the necessary files is hosted at:
+
+
 > **Non-Diagnostic Decision Support. Follow local protocols.**
 
 ## Status
