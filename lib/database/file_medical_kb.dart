@@ -10,7 +10,7 @@ import 'medical_kb.dart';
 /// Loads offline datasets from `assets/kb/datasets/` and implements
 /// [MedicalKb]. First-aid protocol retrieval uses an in-memory 1024-D
 /// feature-hash vector index (pure Dart — no FFmpeg / ObjectBox native
-/// plugins). Pills / plants / triage stay structured lookups.
+/// plugins). Triage rules use a structured JSON lookup.
 ///
 /// Two protocol sources are merged at load time:
 ///
@@ -22,25 +22,16 @@ import 'medical_kb.dart';
 ///   reference (e.g. "Canadian Red Cross Guide · Check, Call, Care
 ///   (pp. 31–32) · firstaid_0019") instead of a generic heading.
 ///
-/// Pills / plants / triage still come from their own structured JSONs.
 class FileMedicalKb implements MedicalKb {
   FileMedicalKb._({
-    required this.pillDatasetName,
-    required this.plantDatasetName,
     required this.triageDatasetName,
     required List<_ProtocolDoc> protocols,
-    required List<_PillRow> pills,
-    required List<_PlantRow> plants,
     required List<_TriageRow> triage,
     required Map<String, _ProtocolDoc> protocolById,
   })  : _protocols = protocols,
         _protocolById = protocolById,
-        _pills = pills,
-        _plants = plants,
         _triage = triage;
 
-  final String pillDatasetName;
-  final String plantDatasetName;
   final String triageDatasetName;
 
   final List<_ProtocolDoc> _protocols;
@@ -49,26 +40,15 @@ class FileMedicalKb implements MedicalKb {
   Future<bool>? _vectorIndexFuture;
   List<_VectorChunk> _vectorIndex = const [];
   bool _liteRtInferenceActive = false;
-  final List<_PillRow> _pills;
-  final List<_PlantRow> _plants;
   final List<_TriageRow> _triage;
 
   /// Load all bundled datasets. Uses [rootBundle] when [bundle] is omitted.
   static Future<FileMedicalKb> load([AssetBundle? bundle]) async {
     final b = bundle ?? rootBundle;
 
-    final pillsJson = await b.loadString('assets/kb/datasets/pills.json');
-    final plantsJson = await b.loadString('assets/kb/datasets/plants.json');
     final triageJson = await b.loadString('assets/kb/datasets/triage.json');
-
-    final pillsRoot = jsonDecode(pillsJson) as Map<String, dynamic>;
-    final plantsRoot = jsonDecode(plantsJson) as Map<String, dynamic>;
     final triageRoot = jsonDecode(triageJson) as Map<String, dynamic>;
 
-    final pillName =
-        (pillsRoot['dataset_name'] as String? ?? 'Pills').trim();
-    final plantName =
-        (plantsRoot['dataset_name'] as String? ?? 'Plants').trim();
     final triageName =
         (triageRoot['dataset_name'] as String? ?? 'Triage').trim();
 
@@ -80,14 +60,6 @@ class FileMedicalKb implements MedicalKb {
       protocols,
     );
 
-    final pills = (pillsRoot['entries'] as List<dynamic>? ?? [])
-        .map((e) => _PillRow.fromJson(e as Map<String, dynamic>))
-        .where((e) => e.id.isNotEmpty && e.imprint.isNotEmpty)
-        .toList();
-    final plants = (plantsRoot['entries'] as List<dynamic>? ?? [])
-        .map((e) => _PlantRow.fromJson(e as Map<String, dynamic>))
-        .where((e) => e.id.isNotEmpty && e.commonName.isNotEmpty)
-        .toList();
     final triage = (triageRoot['entries'] as List<dynamic>? ?? [])
         .map((e) => _TriageRow.fromJson(e as Map<String, dynamic>))
         .where((e) => e.id.isNotEmpty && e.signTerms.isNotEmpty)
@@ -102,12 +74,8 @@ class FileMedicalKb implements MedicalKb {
         .where((p) => '${p.title}\n\n${p.body}'.trim().isNotEmpty)
         .toList();
     return FileMedicalKb._(
-      pillDatasetName: pillName,
-      plantDatasetName: plantName,
       triageDatasetName: triageName,
       protocols: protocols,
-      pills: pills,
-      plants: plants,
       triage: triage,
       protocolById: protocolById,
     ).._vectorIndexReady = storableProtocols.isEmpty;
@@ -384,78 +352,15 @@ class FileMedicalKb implements MedicalKb {
     required String imprint,
     required String shape,
     required String color,
-  }) async {
-    final key = _normalizeImprint(imprint);
-    if (key.isEmpty) return const [];
-
-    final shapeL = shape.toLowerCase().trim();
-    final colorL = color.toLowerCase().trim();
-
-    final out = <PillMatch>[];
-    for (final p in _pills) {
-      if (_normalizeImprint(p.imprint) != key) continue;
-      if (!_dimMatches(shapeL, p.shape)) continue;
-      if (!_dimMatches(colorL, p.color)) continue;
-      out.add(PillMatch(
-        name: p.name,
-        strength: p.strength,
-        notes: p.notes,
-        citation: KbCitation(
-          sourceId: p.id,
-          snippet: '${p.name} — ${p.notes}',
-          datasetName: pillDatasetName,
-          entryTitle: p.name,
-        ),
-      ));
-    }
-    return out;
-  }
+  }) async =>
+      const [];
 
   @override
   Future<List<PlantToxicity>> lookupPlantToxicity({
     String? likelySpecies,
     List<String> cues = const [],
-  }) async {
-    final species = likelySpecies?.toLowerCase().trim() ?? '';
-    final cueList = cues.map((c) => c.toLowerCase().trim()).where((s) => s.isNotEmpty).toList();
-
-    final scored = <_Scored<_PlantRow>>[];
-    for (final row in _plants) {
-      var score = 0;
-      if (species.isNotEmpty) {
-        for (final term in row.speciesTerms) {
-          if (species.contains(term) || term.contains(species)) {
-            score += 4;
-            break;
-          }
-        }
-      }
-      for (final cue in cueList) {
-        if (row.allText.contains(cue)) score += 2;
-        for (final k in row.cues) {
-          if (cue.contains(k) || k.contains(cue)) score += 1;
-        }
-      }
-      if (score > 0) scored.add(_Scored(row, score.toDouble()));
-    }
-    scored.sort((a, b) => b.score.compareTo(a.score));
-    if (scored.isEmpty) return const [];
-
-    final top = scored.first.item;
-    return [
-      PlantToxicity(
-        commonName: top.commonName,
-        risk: top.risk,
-        notes: top.notes,
-        citation: KbCitation(
-          sourceId: top.id,
-          snippet: '${top.commonName}: ${top.notes}',
-          datasetName: plantDatasetName,
-          entryTitle: top.commonName,
-        ),
-      ),
-    ];
-  }
+  }) async =>
+      const [];
 
   @override
   Future<TriageRule?> lookupTriageRule({
@@ -540,14 +445,6 @@ class FileMedicalKb implements MedicalKb {
     }
   }
 
-  static String _normalizeImprint(String s) =>
-      s.toUpperCase().replaceAll(RegExp(r'[^A-Z0-9]'), '');
-
-  static bool _dimMatches(String observed, String expected) {
-    if (observed.isEmpty || observed == 'unknown') return true;
-    if (expected.toLowerCase().trim() == 'unknown') return true;
-    return observed == expected.toLowerCase().trim();
-  }
 }
 
 /// 1024-D signed feature hashing (Murhash-style mixing). All work stays
@@ -657,79 +554,6 @@ class _ProtocolDoc {
     final hi = sorted.last;
     if (lo == hi) return '$title (p. $lo)';
     return '$title (pp. $lo–$hi)';
-  }
-}
-
-class _PillRow {
-  _PillRow({
-    required this.id,
-    required this.imprint,
-    required this.shape,
-    required this.color,
-    required this.name,
-    required this.strength,
-    required this.notes,
-  });
-
-  final String id;
-  final String imprint;
-  final String shape;
-  final String color;
-  final String name;
-  final String strength;
-  final String notes;
-
-  factory _PillRow.fromJson(Map<String, dynamic> j) {
-    return _PillRow(
-      id: (j['id'] as String? ?? '').trim(),
-      imprint: (j['imprint'] as String? ?? '').trim(),
-      shape: (j['shape'] as String? ?? 'unknown').trim(),
-      color: (j['color'] as String? ?? 'unknown').trim(),
-      name: (j['name'] as String? ?? '').trim(),
-      strength: (j['strength'] as String? ?? '').trim(),
-      notes: (j['notes'] as String? ?? '').trim(),
-    );
-  }
-}
-
-class _PlantRow {
-  _PlantRow({
-    required this.id,
-    required this.speciesTerms,
-    required this.commonName,
-    required this.risk,
-    required this.notes,
-    required this.cues,
-  }) : allText = [
-          commonName.toLowerCase(),
-          notes.toLowerCase(),
-          ...speciesTerms.map((s) => s.toLowerCase()),
-          ...cues.map((s) => s.toLowerCase()),
-        ].join(' ');
-
-  final String id;
-  final List<String> speciesTerms;
-  final String commonName;
-  final String risk;
-  final String notes;
-  final List<String> cues;
-  final String allText;
-
-  factory _PlantRow.fromJson(Map<String, dynamic> j) {
-    return _PlantRow(
-      id: (j['id'] as String? ?? '').trim(),
-      speciesTerms: (j['species_terms'] as List<dynamic>? ?? [])
-          .map((e) => e.toString().toLowerCase().trim())
-          .where((s) => s.isNotEmpty)
-          .toList(),
-      commonName: (j['common_name'] as String? ?? '').trim(),
-      risk: (j['risk'] as String? ?? 'unknown').trim().toLowerCase(),
-      notes: (j['notes'] as String? ?? '').trim(),
-      cues: (j['cues'] as List<dynamic>? ?? [])
-          .map((e) => e.toString().trim())
-          .where((s) => s.isNotEmpty)
-          .toList(),
-    );
   }
 }
 
