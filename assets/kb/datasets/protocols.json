@@ -1,0 +1,78 @@
+{
+  "dataset_name": "Base Camp — First-aid protocols (starter, offline)",
+  "version": "0.1",
+  "entries": [
+    {
+      "id": "proto-bleed-direct-001",
+      "title": "Severe external bleeding — direct pressure",
+      "body": "Apply firm direct pressure on the wound with a clean cloth or dressing. If blood soaks through, add more layers on top — do not remove the first layer. Elevate the injured area if practical and not contraindicated. If life-threatening bleeding on a limb and pressure fails, a tourniquet may be considered per local protocol — note the time it was applied. Seek emergency medical care.",
+      "tags": ["bleeding", "hemorrhage", "pressure", "dressing", "tourniquet", "wound"]
+    },
+    {
+      "id": "proto-cpr-adult-001",
+      "title": "Adult CPR — lay responder overview",
+      "body": "Ensure scene safety. Check responsiveness and breathing. If unresponsive and not breathing normally, call emergency services. Begin chest compressions at least 2 inches deep at 100–120 per minute, allowing full recoil. If trained and willing, give rescue breaths after 30 compressions. Use an AED as soon as available — follow its voice prompts.",
+      "tags": ["cpr", "cardiac", "arrest", "compressions", "aed", "resuscitation", "heart"]
+    },
+    {
+      "id": "proto-choking-adult-001",
+      "title": "Choking — conscious adult",
+      "body": "For a conscious adult who cannot cough or speak, give up to five firm back blows between the shoulder blades, then up to five abdominal thrusts (Heimlich) until the object is expelled or the person becomes unresponsive. If unresponsive, begin CPR and look in the mouth for a visible object before breaths.",
+      "tags": ["choking", "airway", "heimlich", "thrust", "obstruction", "breathe"]
+    },
+    {
+      "id": "proto-burn-thermal-001",
+      "title": "Thermal burns — initial cooling",
+      "body": "Cool the burn under cool running water for at least 10–20 minutes as soon as possible. Remove jewelry or tight items near the area before swelling. Do not apply ice directly. Cover loosely with a clean non-fluffy dressing. For large, deep, facial, or airway-involved burns, seek emergency care.",
+      "tags": ["burn", "scald", "thermal", "cooling", "water", "skin"]
+    },
+    {
+      "id": "proto-stroke-fast-001",
+      "title": "Suspected stroke — FAST recognition",
+      "body": "Think FAST: Face drooping, Arm weakness, Speech difficulty — Time to call emergency services. Have the person rest in a safe position. Do not give food or drink. Note the time symptoms were first seen. Stay with the person until help arrives.",
+      "tags": ["stroke", "fast", "neurologic", "weakness", "speech", "face"]
+    },
+    {
+      "id": "proto-anaphylaxis-001",
+      "title": "Severe allergic reaction — escalation",
+      "body": "Call emergency services for trouble breathing, throat or tongue swelling, widespread hives with dizziness, or collapse. Help the person sit or lie with legs elevated if faint unless breathing is easier sitting. If prescribed and available, assist with the person’s epinephrine auto-injector per its instructions. Monitor until professionals arrive.",
+      "tags": ["allergy", "anaphylaxis", "epinephrine", "epi", "breathing", "swelling"]
+    },
+    {
+      "id": "proto-shock-001",
+      "title": "Shock — general first aid",
+      "body": "Signs may include pale cold clammy skin, rapid weak pulse, confusion, or fainting. Lay the person flat and elevate legs about 12 inches unless head, neck, back, or breathing injury is suspected. Loosen tight clothing. Keep warm. Do not give food or drink. Call emergency services.",
+      "tags": ["shock", "faint", "pale", "pulse", "consciousness"]
+    },
+    {
+      "id": "proto-fracture-001",
+      "title": "Suspected fracture — immobilize",
+      "body": "Keep the injured area still. Splint in the position found if trained to do so; otherwise minimize movement. Apply ice wrapped in cloth for pain and swelling. Check circulation beyond the injury — color, warmth, sensation. Seek urgent care for deformity, open fracture, or neurovascular compromise.",
+      "tags": ["fracture", "break", "splint", "bone", "immobilize"]
+    },
+    {
+      "id": "proto-seizure-001",
+      "title": "Seizure — protective measures",
+      "body": "Ease the person to the floor; clear nearby objects. Place something soft under the head. Loosen tight neckwear. Do not restrain or put anything in the mouth. Time the seizure. After it stops, roll onto the side recovery position if responsive breathing. Call emergency services for first seizure, injury, pregnancy, prolonged seizure, or breathing problems.",
+      "tags": ["seizure", "convulsion", "epilepsy", "recovery"]
+    },
+    {
+      "id": "proto-hypothermia-001",
+      "title": "Hypothermia — gentle rewarming",
+      "body": "Move to shelter; remove wet clothing; insulate with dry blankets. Offer warm sweet drinks if fully conscious and able to swallow. Do not rub limbs. For altered mental status or severe cold exposure, call emergency services — avoid rapid aggressive rewarming in the field without training.",
+      "tags": ["cold", "hypothermia", "frostbite", "warmth"]
+    },
+    {
+      "id": "proto-heat-exhaustion-001",
+      "title": "Heat exhaustion",
+      "body": "Move to a cool place. Loosen clothing. Cool with fans, misting, or cool packs to neck, armpits, and groin. Give small sips of water or oral rehydration if conscious and not vomiting. Escalate care if confusion, collapse, or core temperature concern — possible heat stroke.",
+      "tags": ["heat", "exhaustion", "stroke", "dehydration", "temperature"]
+    },
+    {
+      "id": "proto-poison-ingestion-001",
+      "title": "Poisoning — ingestion triage (general)",
+      "body": "Do not induce vomiting unless directed by poison control or a clinician. Call local poison control or emergency services with the substance name, amount, and time. Keep containers for identification. If drowsy, seizing, or breathing poorly, call emergency services immediately.",
+      "tags": ["poison", "ingest", "overdose", "toxic", "vomit"]
+    }
+  ]
+}

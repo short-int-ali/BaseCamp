@@ -21,6 +21,13 @@ Thumbs.db
 assets/models/*
 !assets/models/.gitkeep
 
+# Hands-free speech bundles (Whisper GGML, Silero VAD).
+assets/whisper/*
+!assets/whisper/.gitkeep
+!assets/whisper/README.md
+assets/sherpa/vad/*
+!assets/sherpa/vad/.gitkeep
+
 # Seeded medical KB artifacts (vector DB is regenerated from source).
 assets/kb/*.db
 assets/kb/*.sqlite

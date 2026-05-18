@@ -50,12 +50,44 @@ class TriageRule {
   final KbCitation citation;
 }
 
-/// Local, offline medical knowledge base. Used by [VisionProcessor] to
+/// A first-aid / clinical protocol snippet returned by
+/// [MedicalKb.searchProtocols]. Used by the audio gateway to ground
+/// spoken answers against the local KB and to surface citations in
+/// the transcript — same pattern as the vision module.
+class ProtocolHit {
+  const ProtocolHit({
+    required this.title,
+    required this.snippet,
+    required this.citation,
+    this.score = 0.0,
+  });
+
+  /// Short human-readable title, e.g. `"Severe bleeding control"`.
+  final String title;
+
+  /// 1-3 sentence excerpt of the protocol text that will be shown to
+  /// the user and/or fed back into the model for a grounded answer.
+  final String snippet;
+
+  /// Retrieval score in [0, 1]. Higher is more relevant. Callers may
+  /// filter on this before grounding (e.g. ignore < 0.2).
+  final double score;
+
+  final KbCitation citation;
+}
+
+/// Local, offline medical knowledge base. Used by [AudioGateway] to
 /// ground model output and by the (future) multilingual module to
 /// verify medical terminology before it is spoken aloud.
 ///
 /// Implementations MUST NOT perform any network IO.
 abstract class MedicalKb {
+  /// Hint that a Gemma / LiteRT multimodal turn is in flight.
+  ///
+  /// Implementations can defer heavy native work (e.g. vector-index
+  /// builds) while this is true. Default is a no-op.
+  void setLiteRtInferenceActive(bool active) {}
+
   /// Look up a pill by imprint, shape and color. Returns an empty list
   /// if nothing matches.
   Future<List<PillMatch>> lookupPillImprint({
@@ -79,17 +111,26 @@ abstract class MedicalKb {
     required bool visibleBleeding,
     required bool? responsiveAppearing,
   });
+
+  /// Free-text search over first-aid / clinical protocols in the local
+  /// KB. Used by the hands-free audio gateway to ground model output
+  /// against verified protocol text and surface KB citations. Returns
+  /// an empty list if nothing relevant is found.
+  Future<List<ProtocolHit>> searchProtocols(String query);
 }
 
 /// Placeholder implementation used until a real vector store ships.
 ///
-/// Every method returns an empty / null result. [VisionProcessor] is
+/// Every method returns an empty / null result. [AudioGateway] is
 /// written to handle this gracefully: Pills mode reports "not matched
 /// in local KB", Patients mode falls back to YELLOW with a verify
 /// warning, and Plants mode surfaces the model's own cues without
 /// adding KB-sourced context.
 class NoopMedicalKb implements MedicalKb {
   const NoopMedicalKb();
+
+  @override
+  void setLiteRtInferenceActive(bool active) {}
 
   @override
   Future<List<PillMatch>> lookupPillImprint({
@@ -113,4 +154,7 @@ class NoopMedicalKb implements MedicalKb {
     required bool? responsiveAppearing,
   }) async =>
       null;
+
+  @override
+  Future<List<ProtocolHit>> searchProtocols(String query) async => const [];
 }

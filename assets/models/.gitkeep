@@ -1,6 +1,11 @@
-# Drop the LiteRT-LM bundle for Gemma 4 E4B int4 here:
+# Drop the LiteRT-LM bundle for Gemma 4 E2B int4 here:
 #
-#   assets/models/gemma4_e4b_int4.litertlm
+#   assets/models/gemma4_e2b_int4.litertlm
+#
+# (Base Camp previously targeted Gemma 4 E4B; the runtime contract is
+# identical between the two variants, but the .litertlm bundles are
+# variant-specific — do not rename an E4B bundle into the E2B path.)
 #
 # The file is gitignored (see /.gitignore). The app will refuse to leave
-# the first-boot gate until this file is present.
+# the first-boot gate until this file is present, either bundled here
+# or pushed to the app-specific external files dir on Android.

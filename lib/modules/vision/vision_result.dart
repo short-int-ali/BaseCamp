@@ -1,7 +1,4 @@
-import 'vision_mode.dart';
-
-/// Three-tier emergency triage classification. Only populated for
-/// [VisionMode.patients] results.
+/// Three-tier emergency triage classification.
 enum TriageTier {
   /// Immediate, life-threatening. Intervene now.
   red,
@@ -26,59 +23,40 @@ extension TriageTierX on TriageTier {
   }
 }
 
-/// A single RAG grounding reference attached to a [VisionResult].
+/// A single RAG grounding reference attached to a conversation turn.
 ///
-/// `sourceId` is whatever opaque identifier the local [MedicalKb]
-/// returns (a row id, a document hash, etc.). `snippet` is the short
-/// excerpt that justifies the claim and is safe to render verbatim to
-/// the responder.
+/// [sourceId] is a stable id (often `dataset_entry_id`). [snippet] is
+/// the short excerpt that justifies the claim. [datasetName] and
+/// [entryTitle] are shown in the UI so responders see **which dataset
+/// and section** the match came from — not just an opaque id.
 class KbCitation {
   const KbCitation({
     required this.sourceId,
     required this.snippet,
+    this.datasetName,
+    this.entryTitle,
   });
 
   final String sourceId;
+
+  /// Verbatim or lightly trimmed excerpt from the local KB entry.
   final String snippet;
-}
 
-/// Structured output of a single Snap-and-Solve invocation.
-///
-/// Every field except [triage] is populated for all modes. [triage] is
-/// only non-null when [mode] is [VisionMode.patients].
-class VisionResult {
-  const VisionResult({
-    required this.mode,
-    required this.summary,
-    required this.warnings,
-    required this.citations,
-    required this.groundedByRag,
-    required this.disclaimer,
-    this.triage,
-  });
+  /// Human-readable dataset label from JSON (e.g. "First-aid protocols").
+  final String? datasetName;
 
-  final VisionMode mode;
+  /// Section / entry title within the dataset, when applicable.
+  final String? entryTitle;
 
-  /// One-to-three sentence responder-facing summary. Always ends with
-  /// the non-diagnostic disclaimer (see [disclaimer]).
-  final String summary;
-
-  /// High-signal safety headlines surfaced above the summary in the UI
-  /// (e.g. "Contains cardiac glycosides — do not induce vomiting").
-  final List<String> warnings;
-
-  /// Local-KB citations backing any medical claim in [summary].
-  final List<KbCitation> citations;
-
-  /// True iff [summary]'s medical assertions were cross-referenced
-  /// against [MedicalKb]. A false value means the model produced a
-  /// description but the UI must show a "not verified" affordance.
-  final bool groundedByRag;
-
-  /// Persistent non-diagnostic disclaimer. Repeated here so headless
-  /// consumers of the result (e.g. logging) carry it too.
-  final String disclaimer;
-
-  /// Only set when [mode] == [VisionMode.patients].
-  final TriageTier? triage;
+  /// Compact provenance line for list UIs.
+  String get provenanceLine {
+    final parts = <String>[
+      if (datasetName != null && datasetName!.trim().isNotEmpty)
+        datasetName!.trim(),
+      if (entryTitle != null && entryTitle!.trim().isNotEmpty)
+        entryTitle!.trim(),
+      sourceId,
+    ];
+    return parts.join(' · ');
+  }
 }

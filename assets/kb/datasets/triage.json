@@ -1,0 +1,46 @@
+{
+  "dataset_name": "Base Camp — START-style triage cues (illustrative)",
+  "version": "0.1",
+  "entries": [
+    {
+      "id": "tri-red-airway-001",
+      "tier": "red",
+      "sign_terms": ["not breathing", "no breathing", "apneic", "agonal", "obstructed airway", "choking unconscious"],
+      "visible_bleeding": null,
+      "responsive_appearing": false,
+      "rationale": "Immediate airway or breathing compromise — highest priority per local mass-casualty triage protocols."
+    },
+    {
+      "id": "tri-red-hemorrhage-001",
+      "tier": "red",
+      "sign_terms": ["severe bleeding", "spurting blood", "uncontrolled bleeding", "life threatening bleed"],
+      "visible_bleeding": true,
+      "responsive_appearing": null,
+      "rationale": "Life-threatening hemorrhage — control bleeding and urgent transport per protocol."
+    },
+    {
+      "id": "tri-red-unresponsive-001",
+      "tier": "red",
+      "sign_terms": ["unresponsive", "no pulse", "not responsive", "gasping only"],
+      "visible_bleeding": null,
+      "responsive_appearing": false,
+      "rationale": "Unresponsive with inadequate breathing — immediate intervention and transport."
+    },
+    {
+      "id": "tri-yellow-distress-001",
+      "tier": "yellow",
+      "sign_terms": ["labored breathing", "confused", "severe pain", "altered mental status", "weak pulse"],
+      "visible_bleeding": null,
+      "responsive_appearing": true,
+      "rationale": "Significant abnormality but spontaneous breathing present — urgent evaluation."
+    },
+    {
+      "id": "tri-green-minor-001",
+      "tier": "green",
+      "sign_terms": ["walking", "minor wound", "alert", "ambulatory", "superficial cut"],
+      "visible_bleeding": false,
+      "responsive_appearing": true,
+      "rationale": "Appears stable and able to walk — delayed care acceptable when resources are constrained."
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# Drop the Silero VAD model here:
+#
+#   silero_vad.onnx
+#
+# Download from:
+#   https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/silero_vad.onnx
+#
+# The .onnx blob is gitignored. See assets/sherpa/README.md for the
+# offline install + adb-push checklist.
